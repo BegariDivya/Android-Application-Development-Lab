@@ -23,11 +23,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        uname = (EditText)findViewById(R.id.usrname);
-        pwd = (EditText)findViewById(R.id.passwrd);
-        loginBtn = (Button)findViewById(R.id.Login);
-        pref = getSharedPreferences("userdetails",MODE_PRIVATE);
-        intent = new Intent(MainActivity.this, Details.class);
+        uname = (EditText)findViewById(R.id.txtName);
+        pwd = (EditText)findViewById(R.id.txtPwd);
+        loginBtn = (Button)findViewById(R.id.btnLogin);
+        pref = getSharedPreferences("user_details",MODE_PRIVATE);
+        intent = new Intent(MainActivity.this, DetailsActivity.class);
         if(pref.contains("username") && pref.contains("password")){
             startActivity(intent);
         }
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String username = uname.getText().toString();
                 String password = pwd.getText().toString();
-                if(username.equals("Santhoshi") && password.equals("1225")){
+                if(username.equals("Laxmi") && password.equals("Laxmi")){
                     SharedPreferences.Editor editor = pref.edit();
                     editor.putString("username",username);
                     editor.putString("password",password);
