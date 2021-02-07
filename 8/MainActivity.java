@@ -1,88 +1,61 @@
-package com.example.myapplication;
+package com.example.login;
 
 import androidx.appcompat.app.AppCompatActivity;
-import java.io.*;
-import android.app.Activity;
+
 import android.os.Bundle;
+
+import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-
-public class MainActivity extends AppCompatActivity  {
-    Button b1,b2;
-    EditText ed1;
-    EditText pwd;
-    String uname_;
-    String pwd_;
-    private String file = "C:\\Users\\Dell\\Desktop\\android lab\\filesLab.txt";
-    String data;
+public class MainActivity extends AppCompatActivity {
+    DatabaseHelper databaseHelper;
+    EditText e_username, e_password, e_cpassword;
+    Button btn_register, btn_login;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.content_main);
-
-        b1=(Button)findViewById(R.id.save);
-        b2=(Button)findViewById(R.id.login);
-
-        ed1=(EditText)findViewById(R.id.uname);
-        pwd=(EditText)findViewById(R.id.password);
-        b1.setOnClickListener(new View.OnClickListener() {
+        setContentView(R.layout.activity_main);
+        databaseHelper = new DatabaseHelper(this);
+        e_username = (EditText)findViewById(R.id.e_username);
+        e_password = (EditText)findViewById(R.id.e_password);
+        e_cpassword = (EditText)findViewById(R.id.e_cpassword);
+        btn_register = (Button)findViewById(R.id.btn_register);
+        btn_login = (Button)findViewById(R.id.btn_login);
+        btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    FileOutputStream fOut=openFileOutput(file, MODE_PRIVATE);
-                    data = "user1 123\nuser2 345\nuser3 456\n171216 216\n";
-                    fOut.write(data.getBytes());
-
-                    fOut.close();
-                    Toast.makeText(getBaseContext(), "File saved successfully!",
-                            Toast.LENGTH_SHORT).show();
-
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        b2.setOnClickListener(new View.OnClickListener() {
-
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);}});
+        btn_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("Input to load");
-                uname_ = ed1.getText().toString();
-                pwd_ = pwd.getText().toString();
-                try {
-                    System.out.println("Before File open");
-                    FileInputStream fin = openFileInput(file);
-                    System.out.println("After File open");
-                    int c;
-                    String temp="";
-                    while((c = fin.read()) != -1){
-                        temp = temp + Character.toString((char)c);
-                    }
-                    String file_read[] = temp.split("\n");
-                    boolean isFound = false;
-                    for(String record : file_read) {
-                        String uname_pwd[] = record.split(" ");
-                        if(uname_pwd[0].equalsIgnoreCase(uname_) && uname_pwd[1].equals(pwd_)) {
-                            isFound = true;
-                            break;
+                String username = e_username.getText().toString();
+                String password = e_password.getText().toString();
+                String confirm_password = e_cpassword.getText().toString();
+                if(username.equals("") || password.equals("") || confirm_password.equals("")){
+                    Toast.makeText(getApplicationContext(), "Fields Required", Toast.LENGTH_SHORT).show();
+                }else{
+                    if(password.equals(confirm_password)){
+                        Boolean checkusername = databaseHelper.CheckUsername(username);
+                        if(checkusername == true){Boolean insert = databaseHelper.Insert(username, password);
+
+
+
+                            if(insert == true){
+                                Toast.makeText(getApplicationContext(), "Registered", Toast.LENGTH_SHORT).show();
+                                e_username.setText(username);
+                                e_password.setText(password);
+                                e_cpassword.setText(confirm_password);
+                            }
+                        }else{
+                            Toast.makeText(getApplicationContext(), "Username already taken", Toast.LENGTH_SHORT).show();
                         }
+                    }else{
+                        Toast.makeText(getApplicationContext(), "Password does not match", Toast.LENGTH_SHORT).show();
                     }
-
-                    if(isFound) {
-                        Toast.makeText(getBaseContext(),"Login Successful"  ,Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getBaseContext(),"Login Success"  ,Toast.LENGTH_SHORT).show();
-                    }
-                }
-                catch(Exception e){
                 }
             }
-        });
-    }
+        });}
 }
